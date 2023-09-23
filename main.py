@@ -70,8 +70,72 @@ def umbc_map():
     )
     if True:
         folium.Marker(
-            location=[39.2551755,-76.7113790],
-            popup="test",
+            location=[39.25579239848943, -76.70774746301952],
+            popup="True Grit's Dining Hall",
+        ).add_to(m)
+        folium.Marker(
+            location=[39.25510631849656, -76.71111325383241],
+            popup="Wild Greens",
+        ).add_to(m)
+        folium.Marker(
+            location=[39.25518885701059, -76.71137381365875],
+            popup="Halal Shack",
+        ).add_to(m)
+        folium.Marker(
+            location=[39.25456046005272, -76.71106212699955],
+            popup="Dunkin'",
+        ).add_to(m)
+        folium.Marker(
+            location=[39.25414481349409, -76.71291550055203],
+            popup="Chick-fil-A",
+        ).add_to(m)
+        folium.Marker(
+            location=[39.25512648103092, -76.71121394829719],
+            popup="2.Mato",
+        ).add_to(m)
+        folium.Marker(
+            location=[39.25512648103092, -76.71121394829719],
+            popup="Commons Retriever Market",
+        ).add_to(m)
+        folium.Marker(
+            location=[39.255148288803476, -76.71127094523622],
+            popup="Copperhead Jacks",
+        ).add_to(m)
+        folium.Marker(
+            location=[39.25519189438983, -76.71127028124181],
+            popup="Hissho",
+        ).add_to(m)
+        folium.Marker(
+            location=[39.25518930816724, -76.71124479370278],
+            popup="rbc",
+        ).add_to(m)
+        folium.Marker(
+            location=[339.255008462116535, -76.71068141955072],
+            popup="The Skylight Room",
+        ).add_to(m)
+        folium.Marker(
+            location=[39.25519657741852, -76.71135476426421],
+            popup="Sorrentos",
+        ).add_to(m)
+        folium.Marker(
+            location=[39.25512232716872, -76.71133397714527],
+            popup="Student Choice",
+        ).add_to(m)
+        folium.Marker(
+            location=[39.25640491623738, -76.71162495241681],
+            popup="Einstein Brother's Bagels",
+        ).add_to(m)
+        folium.Marker(
+            location=[39.25427471682431, -76.71323086681052],
+            popup="Starbucks",
+        ).add_to(m)
+        folium.Marker(
+            location=[39.25294158464396, -76.71348604175182],
+            popup="The Coffee Shop",
+        ).add_to(m)
+        folium.Marker(
+            location=[39.25568457647287, -76.70773784764805],
+            popup="True Grit's Retriever Market",
         ).add_to(m)
     folium.CircleMarker([max_latitude, min_longitude], tooltip="Upper Left Corner").add_to(m)
     folium.CircleMarker([min_latitude, min_longitude], tooltip="Lower Left Corner").add_to(m)
