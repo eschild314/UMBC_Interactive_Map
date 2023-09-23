@@ -46,6 +46,51 @@ def fillGenParking():
         with app.app_context():
             db.session.add(parking)
             db.session.commit()
+def umbc_map():
+    min_longitude, max_longitude = -76.716805, -76.705468
+    min_latitude, max_latitude = 39.251128, 39.260057
+
+    m = folium.Map(
+        location=[39.2554, -76.7107],
+        zoom_start=17,
+        control_scale=False,
+        max_bounds=True,
+        min_lat=min_latitude,
+        max_lat=max_latitude,
+        min_lon=min_longitude,
+        max_lon=max_latitude,
+    )
+
+    folium.CircleMarker([max_latitude, min_longitude], tooltip="Upper Left Corner").add_to(m)
+    folium.CircleMarker([min_latitude, min_longitude], tooltip="Lower Left Corner").add_to(m)
+    folium.CircleMarker([min_latitude, max_longitude], tooltip="Lower Right Corner").add_to(m)
+    folium.CircleMarker([max_latitude, max_longitude], tooltip="Upper Right Corner").add_to(m)
+    return m
+
+@app.route("/iframe")
+def iframe():
+    """Embed a map as an iframe on a page."""
+    m = umbc_map()
+
+    # set the iframe width and height
+    m.get_root().width = "800px"
+    m.get_root().height = "600px"
+    iframe = m.get_root()._repr_html_()
+
+    return render_template_string(
+        """
+            <!DOCTYPE html>
+            <html>
+                <head></head>
+                <body>
+                    <h1>Using an iframe</h1>
+                    {{ iframe|safe }}
+                </body>
+            </html>
+        """,
+        iframe=iframe,
+    )
+
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     delete_databases()
