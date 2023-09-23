@@ -1,4 +1,4 @@
-import datetime as dt
+from datetime import datetime as dt
 import json
 import urllib.request
 #import sqlalchemy as db
@@ -47,8 +47,13 @@ def foodTimes():
     foodTimeJson = urllib.request.urlopen("https://api.dineoncampus.com/v1/locations/status?site_id=5751fd3690975b60e04893e2&platform=0")
     openFoodLocations = {}
     for location in json.load(foodTimeJson)['locations']:
-        openFoodLocations[location['name']] = location['status']['message']
-        print(openFoodLocations[location['name']])
+        if location['status']['message']=='Closed.':
+            openFoodLocations[location['name']] = (location['open'],"00:00","none")
+        elif location['status']['message'][-8]==" ":
+            openFoodLocations[location['name']] = (location['open'],dt.strptime("0"+location['status']['message'][-7:-1],'%I:%M%p'),location['status']['message'])
+        else:
+            openFoodLocations[location['name']] = (location['open'], dt.strptime(location['status']['message'][-8:-1], '%I:%M%p'), location['status']['message'])
+    #print(openFoodLocations['Commons Retriever Market'][1].strftime('%H:%M'))
     return openFoodLocations
 
 @app.route("/")
