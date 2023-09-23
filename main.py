@@ -2,8 +2,8 @@ import datetime as dt
 import json
 import urllib.request
 #import sqlalchemy as db
-from flask import Flask
-from flask import Flask
+import folium
+from flask import Flask, render_template_string
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Integer, String, Interval, Time
 from sqlalchemy.orm import Mapped, mapped_column
@@ -12,9 +12,6 @@ from sqlalchemy.orm import Mapped, mapped_column
 # Press Shift+F10 to execute it or replace it with your code.
 # Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
 def delete_databases():
     with app.app_context():
         db.drop_all()
@@ -46,6 +43,7 @@ def fillGenParking():
         with app.app_context():
             db.session.add(parking)
             db.session.commit()
+@app.route("/")
 def umbc_map():
     min_longitude, max_longitude = -76.716805, -76.705468
     min_latitude, max_latitude = 39.251128, 39.260057
@@ -65,9 +63,8 @@ def umbc_map():
     folium.CircleMarker([min_latitude, min_longitude], tooltip="Lower Left Corner").add_to(m)
     folium.CircleMarker([min_latitude, max_longitude], tooltip="Lower Right Corner").add_to(m)
     folium.CircleMarker([max_latitude, max_longitude], tooltip="Upper Right Corner").add_to(m)
-    return m
+    return m.get_root().render()
 
-@app.route("/iframe")
 def iframe():
     """Embed a map as an iframe on a page."""
     m = umbc_map()
@@ -93,6 +90,7 @@ def iframe():
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
+    app.run()
     delete_databases()
     make_databases()
     fillGenParking()
