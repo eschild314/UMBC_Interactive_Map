@@ -60,6 +60,7 @@ def umbc_map():
     m = folium.Map(
         location=[39.2554, -76.7107],
         zoom_start=17,
+        zoom_control=False,
         control_scale=False,
         max_bounds=True,
         min_lat=min_latitude,
