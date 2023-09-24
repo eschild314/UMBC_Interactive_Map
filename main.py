@@ -42,12 +42,11 @@ def fillGenParking():
     genParking[6] = (0,0)
     return genParking
 #Returns true if it's a visitor exception holiday
-def calcFreeParking():
+def calcFreeParking(day,time):
     genParking = fillGenParking()
-    weekDay = date.today().weekday()
-    return not genParking[weekDay][0]<=datetime.now().hour<=genParking[weekDay][1]
-def checkHolidays():
-    today = date.today()
+    weekDay = day.weekday()
+    return not genParking[weekDay][0]<=time.hour<=genParking[weekDay][1]
+def checkHolidays(today):
     if(today==date(today.year, 1, 1)):
         return True
     elif(today==date(today.year,1,today.day) and today.weekday()==0 and 15<=today.day<=21):
@@ -151,7 +150,7 @@ def parse_street_lot_csv(folium_map, permits, filename):
         color, fgs = permits["visitor"]
         for marker in marker_list:
             for fg in fgs:
-                fg.add_child(folium.Marker(location=marker, icon=folium.map.Icon(color=color,icon'')))
+                fg.add_child(folium.Marker(location=marker, icon=folium.map.Icon(color=color,icon='')))
 
 visitor_fg = folium.FeatureGroup(name="No Permit(Visitor)",show=False)
 commuter_fg = folium.FeatureGroup(name="Commuter Permit",show=False)
@@ -167,10 +166,12 @@ def display_index():
 
 @app.route("/map")
 def umbc_map():
+    today = date.today()
+    now = datetime.now()
     #Applies to all lots A,B,C,D and visitor parking, can park in any of the mentioned lots
-    freeParking = calcFreeParking()
+    freeParking = calcFreeParking(today,now)
     #Applies only to visitor parking, can park in visitor free parking
-    visitorFreeParking = freeParking or checkHolidays()
+    visitorFreeParking = freeParking or checkHolidays(today)
     if(freeParking):
         permits = {
             "commuter": ("red", generateAllSubGroups()),
