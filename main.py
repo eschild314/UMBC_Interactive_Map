@@ -154,7 +154,7 @@ commuter_fg = folium.FeatureGroup(name="Commuter Permit",show=False)
 residential_fg = folium.FeatureGroup(name="Residential Permit",show=False)
 faculty_fg = folium.FeatureGroup(name="Faculty Permit",show=False)
 walker_fg = folium.FeatureGroup(name="Walker Permit",show=False)
-parking_fg = folium.FeatureGroup(name="Display ALl Parking",show=False)
+parking_fg = folium.FeatureGroup(name="Display All Parking",show=False)
 def generateAllSubGroups():
     return [subGroup.FeatureGroupSubGroup(visitor_fg,"t",control=False),subGroup.FeatureGroupSubGroup(commuter_fg,"t",control=False),subGroup.FeatureGroupSubGroup(residential_fg,"t",control=False),subGroup.FeatureGroupSubGroup(faculty_fg,"t",control=False),subGroup.FeatureGroupSubGroup(walker_fg,"t",control=False),subGroup.FeatureGroupSubGroup(parking_fg,"t",control=False)]
 @app.route("/")
