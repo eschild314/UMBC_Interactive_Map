@@ -6,6 +6,7 @@ import urllib.request
 #import sqlalchemy as db
 import folium
 import folium.plugins.feature_group_sub_group as subGroup
+from folium import plugins
 import pandas
 from flask import Flask, render_template_string, render_template
 from flask_sqlalchemy import SQLAlchemy
@@ -84,7 +85,6 @@ def add_feature_groups(folium_map, permits):
 PARKING_COORDINATES_CSV = "coords.csv"
 def parse_street_parking_csv(folium_map, permits):
     with open(PARKING_COORDINATES_CSV) as csv_file:
-        print("Just opened file")
         line_count = 0
         coordinates_list = []
 
@@ -92,7 +92,6 @@ def parse_street_parking_csv(folium_map, permits):
         previous_fg_permit = ""
         for raw_line in csv_file:
             # Skip the first line
-            print(line_count)
             if line_count == 0:
                 line_count += 1
                 continue
