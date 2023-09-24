@@ -34,8 +34,7 @@ class genParking(db.Model):
     start: Mapped[Time] = mapped_column(Time, nullable=False)
     end: Mapped[Time] = mapped_column(Time, nullable=False)
 #genParkingTimes=[[0,datetime.time()]]
-def retrieve_closed_dates():
-    print("test")
+
 def fillGenParking():
     genParking = [(7,16) for i in range(7)]
     genParking[5] = (0,0)
@@ -73,7 +72,6 @@ def foodTimes():
             openFoodLocations[location['name']] = (location['open'],"00:00","none")
         else:
             openFoodLocations[location['name']] = (location['open'],"00:00", location['status']['message'])
-    #print(openFoodLocations['Commons Retriever Market'][1].strftime('%H:%M'))
     return openFoodLocations
 
 def add_feature_groups(folium_map, permits):
@@ -105,7 +103,6 @@ def parse_street_parking_csv(folium_map, permits, filename):
             coordinates = (longitude, latitude)
             if previous_section != section_name and previous_section != "":
                 color, fgs = permits[previous_fg_permit]
-                print(coordinates_list)
                 # Add the line to the feature group,
                 # and add the feature group (the toggle layer) to the map.
                 for fg in fgs:
@@ -208,11 +205,9 @@ def umbc_map():
             "visitor": ("blue", [subGroup.FeatureGroupSubGroup(visitor_fg, "t", control=False),
                                  subGroup.FeatureGroupSubGroup(parking_fg, "t", control=False)])
         }
-    print(freeParking)
     min_longitude, max_longitude = -76.72840172303653, -76.705468
     min_latitude, max_latitude = 39.24946769219659, 39.26132540444559
     openFoodLocations = foodTimes()
-    print(openFoodLocations)
     m = folium.Map(
         location=[39.2554, -76.7107],
         zoom_start=17,
@@ -340,10 +335,4 @@ def iframe():
     )
 
 if __name__ == '__main__':
-    print(genParking)
     app.run()
-    #delete_databases()
-    #make_databases()
-    #with app.app_context():
-    #    print(genParking.query.all())
-    #print(str(dt.date.today()))
