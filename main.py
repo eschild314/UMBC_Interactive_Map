@@ -1,4 +1,6 @@
 from datetime import datetime as dt
+from datetime import date
+from datetime import datetime
 import json
 import urllib.request
 #import sqlalchemy as db
@@ -7,6 +9,8 @@ from flask import Flask, render_template_string
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Integer, String, Interval, Time
 from sqlalchemy.orm import Mapped, mapped_column
+#from dateutil import rrule
+#from dateutil import relativedelta
 
 def delete_databases():
     with app.app_context():
@@ -30,15 +34,35 @@ class genParking(db.Model):
 def retrieve_closed_dates():
     print("test")
 def fillGenParking():
-    for count in range(7):
-        parking = genParking(
-            day=count,
-            start=dt.time(7,0,0),
-            end=dt.time(16,0,0)
-        )
-        with app.app_context():
-            db.session.add(parking)
-            db.session.commit()
+    genParking = [(7,16) for i in range(7)]
+    genParking[5] = (0,0)
+    genParking[6] = (0,0)
+    return genParking
+#Returns true if it's a visitor exception holiday
+def calcFreeParking():
+    genParking = fillGenParking()
+    weekDay = date.today().weekday()
+    return not genParking[weekDay][0]<=datetime.now().hour<=genParking[weekDay][1]
+def checkHolidays():
+    today = date.today()
+    if(today==date(today.year, 1, 1)):
+        return True
+    elif(today==date(today.year,1,today.day) and today.weekday()==0 and 15<=today.day<=21):
+        return True
+    elif(today==date(today.year,5,today.day) and today.weekday()==0 and 25<=today.day<=31):
+        return True
+    elif(today==date(today.year, 6, 19)):
+        return True
+    elif(today==date(today.year, 7, 4)):
+        return True
+    elif(today==date(today.year,11,today.day) and today.weekday()==3 and 22<=today.day<=28):
+        return True
+    elif(today==date(today.year,11,today.day) and today.weekday()==4 and 23<=today.day<=29):
+        return True
+    elif(today==date(today.year,12,today.day) and today.day>=25):
+        return True
+    else:
+        return False
 def foodTimes():
     foodTimeJson = urllib.request.urlopen("https://api.dineoncampus.com/v1/locations/status?site_id=5751fd3690975b60e04893e2&platform=0")
     openFoodLocations = {}
@@ -52,6 +76,11 @@ def foodTimes():
 
 @app.route("/")
 def umbc_map():
+    #Applies to all lots A,B,C,D and visitor parking, can park in any of the mentioned lots
+    freeParking = calcFreeParking()
+    #Applies only to visitor parking, can park in visitor free parking
+    visitorFreeParking = freeParking or checkHolidays()
+    print(freeParking)
     min_longitude, max_longitude = -76.716805, -76.705468
     min_latitude, max_latitude = 39.251128, 39.260057
     openFoodLocations = foodTimes()
@@ -174,10 +203,10 @@ def iframe():
     )
 
 if __name__ == '__main__':
+    print(genParking)
     app.run()
-    delete_databases()
-    make_databases()
-    #fillGenParking()
-    with app.app_context():
-        print(genParking.query.all())
-    print(str(dt.date.today()))
+    #delete_databases()
+    #make_databases()
+    #with app.app_context():
+    #    print(genParking.query.all())
+    #print(str(dt.date.today()))
