@@ -1,6 +1,7 @@
 from datetime import datetime as dt
 from datetime import date
 from datetime import datetime
+from datetime import time
 import json
 import urllib.request
 import folium
@@ -148,6 +149,11 @@ def display_index():
 def umbc_map():
     today = date.today()
     now = datetime.now()
+    #Date and Time examples
+    #today = date(2023, 9, 25)
+    #now = time(12,0)
+    #today = date(2024,3,18)
+    #now = time(13,0)
     #Applies to all lots A,B,C,D and visitor parking, can park in any of the mentioned lots
     freeParking = calcFreeParking(today,now)
     #Applies only to visitor parking, can park in visitor free parking
