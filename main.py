@@ -210,71 +210,71 @@ def umbc_map():
     if openFoodLocations["TRUE GRIT'S"][0]:
         dining_fg.add_child(folium.Marker(
             location=[39.25579239848943, -76.70774746301952],
-            popup=folium.Popup("True Grit's Dining Hall"+" "+openFoodLocations["TRUE GRIT'S"][2], max_width="100%")))
+            popup=folium.Popup("True Grit's Dining Hall"+" "+openFoodLocations["TRUE GRIT'S"][2],min_width=20, max_width=100)))
     if openFoodLocations["Wild Greens"][0]:
         dining_fg.add_child(folium.Marker(
             location=[39.25510631849656, -76.71111325383241],
-            popup="Wild Greens"+" "+openFoodLocations["Wild Greens"][2]))
+            popup=folium.Popup("Wild Greens" + " " + openFoodLocations["Wild Greens"][2],min_width=20, max_width=100)))
     if openFoodLocations["Halal Shack"][0]:
         dining_fg.add_child(folium.Marker(
             location=[39.25518885701059, -76.71137381365875],
-            popup="Halal Shack"+" "+openFoodLocations["Halal Shack"][2]))
+            popup=folium.Popup("Halal Shack" + " " + openFoodLocations["Halal Shack"][2],min_width=20, max_width=100)))
     if openFoodLocations["Dunkin"][0]:
         dining_fg.add_child(folium.Marker(
             location=[39.25456046005272, -76.71106212699955],
-            popup="Dunkin'"+" "+openFoodLocations["Dunkin"][2]))
+            popup=folium.Popup("Dunkin" + " " + openFoodLocations["Dunkin"][2],min_width=20, max_width=100)))
     if openFoodLocations["Chick-fil-A"][0]:
         dining_fg.add_child(folium.Marker(
             location=[39.25414481349409, -76.71291550055203],
-            popup="Chick-fil-A"+" "+openFoodLocations["Chick-fil-A"][2]))
+            popup=folium.Popup("Chick-fil-A" + " " + openFoodLocations["Chick-fil-A"][2],min_width=20, max_width=100)))
     if openFoodLocations["2.Mato"][0]:
         dining_fg.add_child(folium.Marker(
             location=[39.25512648103092, -76.71121394829719],
-            popup="2.Mato"+" "+openFoodLocations["2.Mato"][2]))
+            popup=folium.Popup("2.Mato" + " " + openFoodLocations["2.Mato"][2],min_width=20, max_width=100)))
     if openFoodLocations["Commons Retriever Market"][0]:
         dining_fg.add_child(folium.Marker(
             location=[39.25512648103092, -76.71121394829719],
-            popup="Commons Retriever Market"+" "+openFoodLocations["Commons Retriever Market"][2]))
+            popup=folium.Popup("Commons Retriever Market" + " " + openFoodLocations["Commons Retriever Market"][2],min_width=20, max_width=100)))
     if openFoodLocations["Copperhead Jacks"][0]:    
         dining_fg.add_child(folium.Marker(
             location=[39.255148288803476, -76.71127094523622],
-            popup="Copperhead Jacks"+" "+openFoodLocations["Copperhead Jacks"][2]))
+            popup=folium.Popup("Copperhead Jacks" + " " + openFoodLocations["Copperhead Jacks"][2],min_width=20, max_width=100)))
     if openFoodLocations["Hissho"][0]:
         dining_fg.add_child(folium.Marker(
             location=[39.25519189438983, -76.71127028124181],
-            popup="Hissho"+" "+openFoodLocations["Hissho"][2]))
+            popup=folium.Popup("Hissho" + " " + openFoodLocations["Hissho"][2],min_width=20, max_width=100)))
     if openFoodLocations["rbc"][0]:    
         dining_fg.add_child(folium.Marker(
             location=[39.25518930816724, -76.71124479370278],
-            popup="rbc"+" "+openFoodLocations["rbc"][2]))
+            popup=folium.Popup("rbc" + " " + openFoodLocations["rbc"][2],min_width=20, max_width=100)))
     if openFoodLocations["The Skylight Room"][0]:    
         dining_fg.add_child(folium.Marker(
             location=[339.255008462116535, -76.71068141955072],
-            popup="The Skylight Room"+" "+openFoodLocations["The Skylight Room"][2]))
+            popup=folium.Popup("The Skylight Room" + " " + openFoodLocations["The Skylight Room"][2],min_width=20, max_width=100)))
     if openFoodLocations["Sorrentos"][0]:
         dining_fg.add_child(folium.Marker(
             location=[39.25519657741852, -76.71135476426421],
-            popup="Sorrentos"+" "+openFoodLocations["Sorrentos"][2]))
+            popup=folium.Popup("Sorrentos" + " " + openFoodLocations["Sorrentos"][2],min_width=20, max_width=100)))
     if openFoodLocations["Student Choice"][0]:
         dining_fg.add_child(folium.Marker(
             location=[39.25512232716872, -76.71133397714527],
-            popup="Student Choice"+" "+openFoodLocations["Student Choice"][2]))
+            popup=folium.Popup("Student Choice" + " " + openFoodLocations["Student Choice"][2],min_width=20, max_width=100)))
     if openFoodLocations["Einstein Brother's Bagels"][0]:
         dining_fg.add_child(folium.Marker(
             location=[39.25640491623738, -76.71162495241681],
-            popup="Einstein Brother's Bagels"+" "+openFoodLocations["Einstein Brother's Bagels"][2]))
+            popup=folium.Popup("Einstein Brother's Bagels" + " " + openFoodLocations["Einstein Brother's Bagels"][2],min_width=20, max_width=100)))
     if openFoodLocations["Starbucks"][0]:
         dining_fg.add_child(folium.Marker(
             location=[39.25427471682431, -76.71323086681052],
-            popup="Starbucks"+" "+openFoodLocations["Starbucks"][2]))
+            popup=folium.Popup("Starbucks" + " " + openFoodLocations["Starbucks"][2],min_width=20, max_width=100)))
     if openFoodLocations["The Coffee Shop"][0]:    
         dining_fg.add_child(folium.Marker(
             location=[39.25294158464396, -76.71348604175182],
-            popup="The Coffee Shop"+" "+openFoodLocations["The Coffee Shop"][2]))
+            popup=folium.Popup("The Coffee Shop"+" "+openFoodLocations["The Coffee Shop"][2],min_width=20,max_width=100)))
     if openFoodLocations["True Grit's Retriever Market"][0]:    
-        dining_fg.add_child(folium.Marker(
+        dining_fg.add_child(folium.Marker(min_width=500,max_width=500,
             location=[39.25568457647287, -76.70773784764805],
-            popup="True Grit's Retriever Market"+" "+openFoodLocations["True Grit's Retriever Market"][2]))
+            popup=folium.Popup("True Grit's Retriever Market"+" "+openFoodLocations["True Grit's Retriever Market"][2],min_width=20,max_width=100)))
         
     m.add_child(dining_fg)
 
