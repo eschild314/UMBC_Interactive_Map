@@ -144,7 +144,7 @@ def parse_street_lot_csv(folium_map, permits, filename):
                 if previous_fg_permit != permit_type:
                     for marker in marker_list:
                         for fg in fgs:
-                            fg.add_child(folium.Marker(location=marker, icon=folium.map.Icon(color=color)))
+                            fg.add_child(folium.Marker(location=marker, icon=folium.map.Icon(color=color,icon='')))
                     marker_list = []
             marker_list.append(coordinates)
             previous_fg_permit = permit_type
