@@ -193,7 +193,7 @@ def umbc_map():
     openFoodLocations = foodTimes()
     m = folium.Map(
         location=[39.2554, -76.7107],
-        zoom_start=17,
+        zoom_start=16,
         min_zoom=16,
         zoom_control=False,
         control_scale=False,
