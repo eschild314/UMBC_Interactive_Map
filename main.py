@@ -83,8 +83,9 @@ def add_feature_groups(folium_map, permits):
 
 # Returns a list of lists of tuples containing coordinates
 PARKING_COORDINATES_CSV = "coords.csv"
-def parse_street_parking_csv(folium_map, permits):
-    with open(PARKING_COORDINATES_CSV) as csv_file:
+LOT_COORDINATES_CSV = "lot_coords.csv"
+def parse_street_parking_csv(folium_map, permits, filename):
+    with open(filename) as csv_file:
         line_count = 0
         coordinates_list = []
 
@@ -230,7 +231,7 @@ def umbc_map():
     folium.CircleMarker([min_latitude, min_longitude], tooltip="Lower Left Corner").add_to(m)
     folium.CircleMarker([min_latitude, max_longitude], tooltip="Lower Right Corner").add_to(m)
     folium.CircleMarker([max_latitude, max_longitude], tooltip="Upper Right Corner").add_to(m)
-    parse_street_parking_csv(m, permits)
+    parse_street_parking_csv(m, permits, PARKING_COORDINATES_CSV)
     m.add_child(parking_fg)
     add_feature_groups(m, permits)
     m.add_child(folium.LayerControl(collapsed=False))
