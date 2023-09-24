@@ -5,7 +5,8 @@ import json
 import urllib.request
 #import sqlalchemy as db
 import folium
-from flask import Flask, render_template_string, render_template
+import pandas
+from flask import Flask, render_template_string
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Integer, String, Interval, Time
 from sqlalchemy.orm import Mapped, mapped_column
@@ -20,7 +21,7 @@ def make_databases():
         db.create_all()
 db = SQLAlchemy()
 # create the app
-app = Flask(__name__, static_folder="assets")
+app = Flask(__name__)
 # configure the SQLite database, relative to the app instance folder
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///main.db"
 # initialize the app with the extension
@@ -74,11 +75,56 @@ def foodTimes():
     #print(openFoodLocations['Commons Retriever Market'][1].strftime('%H:%M'))
     return openFoodLocations
 
+def add_feature_groups(folium_map, permits):
+    for permit_type in permits:
+        folium_map.add_child(permits[permit_type][1])
+
+# Returns a list of lists of tuples containing coordinates
+PARKING_COORDINATES_CSV = "coords.csv"
+def parse_street_parking_csv(folium_map, permits):
+    with open(PARKING_COORDINATES_CSV) as csv_file:
+        print("Just opened file")
+        line_count = 0
+        coordinates_list = []
+
+        previous_section = ""
+        previous_fg_permit = ""
+        for raw_line in csv_file:
+            # Skip the first line
+            print(line_count)
+            if line_count == 0:
+                line_count += 1
+                continue
+            line_count += 1
+            line = raw_line.strip()
+            fields = line.split(",")
+            permit_type, section_name = fields[0], fields[1]
+            longitude, latitude = float(fields[2]), float(fields[3])
+
+            coordinates = (longitude, latitude)
+            if previous_section != section_name and previous_section != "":
+                color, fg = permits[previous_fg_permit]
+                print(coordinates_list)
+                p_line = folium.PolyLine(coordinates_list,
+                                         color=color,
+                                         weight=5,
+                                         opacity=0.8)
+                # Add the line to the feature group,
+                # and add the feature group (the toggle layer) to the map.
+                p_line.add_to(fg)
+                coordinates_list = []
+            coordinates_list.append(coordinates)
+            previous_section = section_name
+            previous_fg_permit = permit_type
+
+
 @app.route("/")
-def main_page():
-    return render_template("index.html")
-@app.route("/map")
 def umbc_map():
+    permits = {
+        "commuter"      : ("red",       folium.FeatureGroup(name="Commuter Parking")),
+        "residential"   : ("yellow",    folium.FeatureGroup(name="Residential Parking")),
+        "faculty"       : ("purple",    folium.FeatureGroup(name="Faculty Parking")),
+    }
     #Applies to all lots A,B,C,D and visitor parking, can park in any of the mentioned lots
     freeParking = calcFreeParking()
     #Applies only to visitor parking, can park in visitor free parking
@@ -173,13 +219,14 @@ def umbc_map():
             popup="True Grit's Retriever Market"+" "+openFoodLocations["True Grit's Retriever Market"][2]))
         
         m.add_child(dining_fg)
-        # m.add_child(PARKING FEATURE GROUP HERE)
-        m.add_child(folium.LayerControl(collapsed=False))
 
     folium.CircleMarker([max_latitude, min_longitude], tooltip="Upper Left Corner").add_to(m)
     folium.CircleMarker([min_latitude, min_longitude], tooltip="Lower Left Corner").add_to(m)
     folium.CircleMarker([min_latitude, max_longitude], tooltip="Lower Right Corner").add_to(m)
     folium.CircleMarker([max_latitude, max_longitude], tooltip="Upper Right Corner").add_to(m)
+    parse_street_parking_csv(m, permits)
+    add_feature_groups(m, permits)
+    m.add_child(folium.LayerControl(collapsed=False))
     return m.get_root().render()
 
 def iframe():
