@@ -151,7 +151,7 @@ def parse_street_lot_csv(folium_map, permits, filename):
         color, fgs = permits["visitor"]
         for marker in marker_list:
             for fg in fgs:
-                fg.add_child(folium.Marker(location=marker, icon=folium.map.Icon(color=color)))
+                fg.add_child(folium.Marker(location=marker, icon=folium.map.Icon(color=color,icon'')))
 
 visitor_fg = folium.FeatureGroup(name="No Permit(Visitor)",show=False)
 commuter_fg = folium.FeatureGroup(name="Commuter Permit",show=False)
