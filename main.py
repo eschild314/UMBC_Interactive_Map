@@ -5,7 +5,7 @@ import json
 import urllib.request
 #import sqlalchemy as db
 import folium
-from flask import Flask, render_template_string
+from flask import Flask, render_template_string, render_template
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Integer, String, Interval, Time
 from sqlalchemy.orm import Mapped, mapped_column
@@ -20,7 +20,7 @@ def make_databases():
         db.create_all()
 db = SQLAlchemy()
 # create the app
-app = Flask(__name__)
+app = Flask(__name__, static_folder="assets")
 # configure the SQLite database, relative to the app instance folder
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///main.db"
 # initialize the app with the extension
@@ -75,6 +75,9 @@ def foodTimes():
     return openFoodLocations
 
 @app.route("/")
+def main_page():
+    return render_template("index.html")
+@app.route("/map")
 def umbc_map():
     #Applies to all lots A,B,C,D and visitor parking, can park in any of the mentioned lots
     freeParking = calcFreeParking()
