@@ -6,7 +6,7 @@ import urllib.request
 #import sqlalchemy as db
 import folium
 import pandas
-from flask import Flask, render_template_string
+from flask import Flask, render_template_string, render_template
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Integer, String, Interval, Time
 from sqlalchemy.orm import Mapped, mapped_column
@@ -21,7 +21,7 @@ def make_databases():
         db.create_all()
 db = SQLAlchemy()
 # create the app
-app = Flask(__name__)
+app = Flask(__name__,static_folder="assets")
 # configure the SQLite database, relative to the app instance folder
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///main.db"
 # initialize the app with the extension
@@ -119,6 +119,10 @@ def parse_street_parking_csv(folium_map, permits):
 
 
 @app.route("/")
+def display_index():
+    return render_template("index.html")
+
+@app.route("/map")
 def umbc_map():
     permits = {
         "commuter"      : ("red",       folium.FeatureGroup(name="Commuter Parking")),
