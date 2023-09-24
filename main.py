@@ -5,6 +5,7 @@ import json
 import urllib.request
 #import sqlalchemy as db
 import folium
+import folium.plugins.feature_group_sub_group as subGroup
 import pandas
 from flask import Flask, render_template_string, render_template
 from flask_sqlalchemy import SQLAlchemy
@@ -124,10 +125,11 @@ def display_index():
 
 @app.route("/map")
 def umbc_map():
+    parking_fg = folium.FeatureGroup(name="Parking")
     permits = {
-        "commuter"      : ("red",       folium.FeatureGroup(name="Commuter Parking")),
-        "residential"   : ("yellow",    folium.FeatureGroup(name="Residential Parking")),
-        "faculty"       : ("purple",    folium.FeatureGroup(name="Faculty Parking")),
+        "commuter"      : ("red",       subGroup.FeatureGroupSubGroup(parking_fg,name="Commuter Parking")),
+        "residential"   : ("yellow",    subGroup.FeatureGroupSubGroup(parking_fg,name="Residential Parking")),
+        "faculty"       : ("purple",    subGroup.FeatureGroupSubGroup(parking_fg,name="Faculty Parking")),
     }
     #Applies to all lots A,B,C,D and visitor parking, can park in any of the mentioned lots
     freeParking = calcFreeParking()
@@ -230,6 +232,7 @@ def umbc_map():
     folium.CircleMarker([min_latitude, max_longitude], tooltip="Lower Right Corner").add_to(m)
     folium.CircleMarker([max_latitude, max_longitude], tooltip="Upper Right Corner").add_to(m)
     parse_street_parking_csv(m, permits)
+    m.add_child(parking_fg)
     add_feature_groups(m, permits)
     m.add_child(folium.LayerControl(collapsed=False))
     return m.get_root().render()
