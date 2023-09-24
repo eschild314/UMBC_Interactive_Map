@@ -79,7 +79,8 @@ def foodTimes():
 
 def add_feature_groups(folium_map, permits):
     for permit_type in permits:
-        folium_map.add_child(permits[permit_type][1])
+        for group in permits[permit_type][1]:
+            folium_map.add_child(group)
 
 # Returns a list of lists of tuples containing coordinates
 PARKING_COORDINATES_CSV = "coords.csv"
@@ -104,15 +105,15 @@ def parse_street_parking_csv(folium_map, permits, filename):
 
             coordinates = (longitude, latitude)
             if previous_section != section_name and previous_section != "":
-                color, fg = permits[previous_fg_permit]
+                color, fgs = permits[previous_fg_permit]
                 print(coordinates_list)
-                p_line = folium.PolyLine(coordinates_list,
-                                         color=color,
-                                         weight=5,
-                                         opacity=0.8)
                 # Add the line to the feature group,
                 # and add the feature group (the toggle layer) to the map.
-                p_line.add_to(fg)
+                for fg in fgs:
+                    fg.add_child(folium.PolyLine(coordinates_list,
+                                    color=color,
+                                    weight=5,
+                                    opacity=0.8))
                 coordinates_list = []
             coordinates_list.append(coordinates)
             previous_section = section_name
@@ -139,38 +140,73 @@ def parse_street_lot_csv(folium_map, permits, filename):
             coordinates = (longitude, latitude)
 
             if previous_fg_permit != "":
-                color, fg = permits[previous_fg_permit]
+                color, fgs = permits[previous_fg_permit]
                 if previous_fg_permit != permit_type:
                     for marker in marker_list:
-                        marker.add_to(fg)
+                        for fg in fgs:
+                            fg.add_child(folium.Marker(location=marker, icon=folium.map.Icon(color=color)))
                     marker_list = []
-                else:
-                    marker = folium.Marker(location=coordinates, icon=folium.map.Icon(color=color))
-                    marker_list.append(marker)
-
+            marker_list.append(coordinates)
             previous_fg_permit = permit_type
+        color, fgs = permits["visitor"]
+        for marker in marker_list:
+            for fg in fgs:
+                fg.add_child(folium.Marker(location=marker, icon=folium.map.Icon(color=color)))
 
-
-
+visitor_fg = folium.FeatureGroup(name="No Permit(Visitor)",show=False)
+commuter_fg = folium.FeatureGroup(name="Commuter Permit",show=False)
+residential_fg = folium.FeatureGroup(name="Residential Permit",show=False)
+faculty_fg = folium.FeatureGroup(name="Faculty Permit",show=False)
+walker_fg = folium.FeatureGroup(name="Walker Permit",show=False)
+parking_fg = folium.FeatureGroup(name="Display ALl Parking",show=False)
+def generateAllSubGroups():
+    return [subGroup.FeatureGroupSubGroup(visitor_fg,"t",control=False),subGroup.FeatureGroupSubGroup(commuter_fg,"t",control=False),subGroup.FeatureGroupSubGroup(residential_fg,"t",control=False),subGroup.FeatureGroupSubGroup(faculty_fg,"t",control=False),subGroup.FeatureGroupSubGroup(walker_fg,"t",control=False),subGroup.FeatureGroupSubGroup(parking_fg,"t",control=False)]
 @app.route("/")
 def display_index():
     return render_template("index.html")
 
 @app.route("/map")
 def umbc_map():
-    parking_fg = folium.FeatureGroup(name="Parking")
-    permits = {
-        "commuter"      : ("red",       subGroup.FeatureGroupSubGroup(parking_fg,name="Commuter Parking")),
-        "residential"   : ("yellow",    subGroup.FeatureGroupSubGroup(parking_fg,name="Residential Parking")),
-        "faculty"       : ("purple",    subGroup.FeatureGroupSubGroup(parking_fg,name="Faculty Parking")),
-        "walker"        : ("green",     subGroup.FeatureGroupSubGroup(parking_fg,name="Walker Resident Parking")),
-        "gated"         : ("darkpurple",subGroup.FeatureGroupSubGroup(parking_fg,name="Gated Faculty Parking")),
-        "visitor"       : ("blue",subGroup.FeatureGroupSubGroup(parking_fg,name="Visitor Faculty Parking")),
-    }
     #Applies to all lots A,B,C,D and visitor parking, can park in any of the mentioned lots
     freeParking = calcFreeParking()
     #Applies only to visitor parking, can park in visitor free parking
     visitorFreeParking = freeParking or checkHolidays()
+    if(freeParking):
+        permits = {
+            "commuter": ("red", generateAllSubGroups()),
+            "residential": ("lightgreen",generateAllSubGroups()),
+            "faculty": ("purple", generateAllSubGroups()),
+            "walker": ("green", generateAllSubGroups()),
+            "gated": ("darkpurple", [subGroup.FeatureGroupSubGroup(faculty_fg, "t", control=False),
+                                   subGroup.FeatureGroupSubGroup(parking_fg, "t", control=False)]),
+            "visitor": ("blue", generateAllSubGroups()),
+        }
+    elif(visitorFreeParking):
+        permits = {
+            "commuter": ("red", [subGroup.FeatureGroupSubGroup(commuter_fg, "t", control=False),
+                                 subGroup.FeatureGroupSubGroup(parking_fg, "t", control=False)]),
+            "residential": ("lightgreen", [subGroup.FeatureGroupSubGroup(residential_fg, "t", control=False),
+                                       subGroup.FeatureGroupSubGroup(parking_fg, "t", control=False)]),
+            "faculty": ("purple", [subGroup.FeatureGroupSubGroup(faculty_fg, "t", control=False),
+                                   subGroup.FeatureGroupSubGroup(parking_fg, "t", control=False)]),
+            "walker": ("green", [subGroup.FeatureGroupSubGroup(walker_fg, "t", control=False),
+                                   subGroup.FeatureGroupSubGroup(parking_fg, "t", control=False)]),
+            "gated": ("darkpurple", [subGroup.FeatureGroupSubGroup(faculty_fg, "t", control=False),
+                                   subGroup.FeatureGroupSubGroup(parking_fg, "t", control=False)]),
+            "visitor": ("blue", generateAllSubGroups()),
+        }
+    else:
+        permits = {
+            "commuter": ("red", [subGroup.FeatureGroupSubGroup(commuter_fg,"t",control=False),subGroup.FeatureGroupSubGroup(parking_fg,"t",control=False)]),
+            "residential": ("lightgreen", [subGroup.FeatureGroupSubGroup(residential_fg,"t",control=False),subGroup.FeatureGroupSubGroup(parking_fg,"t",control=False)]),
+            "faculty": ("purple", [subGroup.FeatureGroupSubGroup(faculty_fg,"t",control=False),subGroup.FeatureGroupSubGroup(parking_fg,"t",control=False)]),
+            "walker": ("green", [subGroup.FeatureGroupSubGroup(walker_fg, "t", control=False),
+                                 subGroup.FeatureGroupSubGroup(parking_fg, "t", control=False)]),
+            "gated": ("darkpurple", [subGroup.FeatureGroupSubGroup(faculty_fg, "t", control=False),
+                                   subGroup.FeatureGroupSubGroup(parking_fg, "t", control=False)]),
+            "visitor": ("blue", [subGroup.FeatureGroupSubGroup(visitor_fg, "t", control=False),
+                                 subGroup.FeatureGroupSubGroup(parking_fg, "t", control=False)])
+        }
     print(freeParking)
     min_longitude, max_longitude = -76.72840172303653, -76.705468
     min_latitude, max_latitude = 39.24946769219659, 39.26132540444559
@@ -267,9 +303,14 @@ def umbc_map():
     folium.CircleMarker([min_latitude, min_longitude], tooltip="Lower Left Corner").add_to(m)
     folium.CircleMarker([min_latitude, max_longitude], tooltip="Lower Right Corner").add_to(m)
     folium.CircleMarker([max_latitude, max_longitude], tooltip="Upper Right Corner").add_to(m)
+    m.add_child(parking_fg)
+    m.add_child(visitor_fg)
+    m.add_child(residential_fg)
+    m.add_child(commuter_fg)
+    m.add_child(faculty_fg)
+    m.add_child(walker_fg)
     parse_street_parking_csv(m, permits, PARKING_COORDINATES_CSV)
     parse_street_lot_csv(m, permits, LOT_COORDINATES_CSV)
-    m.add_child(parking_fg)
     add_feature_groups(m, permits)
     m.add_child(folium.LayerControl(collapsed=False))
     return m.get_root().render()
