@@ -7,8 +7,11 @@ which restaurants are open and which parking
 zones are available for each parking permit type.
 
 You no longer have to search DineOnCampus for the table of
-hours to know which restaurants are open; it's displayed
+hours to know which restaurants on campus are open; it's displayed
 for you on our website.
+
+It may be particularly helpful for new students and staff/faculty, as well as
+those who are visiting campus temporarily.
 
 ## Components
 
