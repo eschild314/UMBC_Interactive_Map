@@ -118,6 +118,39 @@ def parse_street_parking_csv(folium_map, permits, filename):
             previous_section = section_name
             previous_fg_permit = permit_type
 
+# Probably overcomplicated, and could be made into a single function
+# with the one above it.
+def parse_street_lot_csv(folium_map, permits, filename):
+    with open(filename) as csv_file:
+        line_count = 0
+        marker_list = []
+
+        previous_fg_permit = ""
+        for raw_line in csv_file:
+            # Skip the first line
+            if line_count == 0:
+                line_count += 1
+                continue
+            line = raw_line.strip()
+            fields = line.split(",")
+            permit_type, _ = fields[0], fields[1]
+            longitude, latitude = float(fields[2]), float(fields[3])
+
+            coordinates = (longitude, latitude)
+
+            if previous_fg_permit != "":
+                color, fg = permits[previous_fg_permit]
+                if previous_fg_permit != permit_type:
+                    for marker in marker_list:
+                        marker.add_to(fg)
+                    marker_list = []
+                else:
+                    marker = folium.Marker(location=coordinates, icon=folium.map.Icon(color=color))
+                    marker_list.append(marker)
+
+            previous_fg_permit = permit_type
+
+
 
 @app.route("/")
 def display_index():
@@ -130,6 +163,9 @@ def umbc_map():
         "commuter"      : ("red",       subGroup.FeatureGroupSubGroup(parking_fg,name="Commuter Parking")),
         "residential"   : ("yellow",    subGroup.FeatureGroupSubGroup(parking_fg,name="Residential Parking")),
         "faculty"       : ("purple",    subGroup.FeatureGroupSubGroup(parking_fg,name="Faculty Parking")),
+        "walker"        : ("green",     subGroup.FeatureGroupSubGroup(parking_fg,name="Walker Resident Parking")),
+        "gated"         : ("darkpurple",subGroup.FeatureGroupSubGroup(parking_fg,name="Gated Faculty Parking")),
+        "visitor"       : ("blue",subGroup.FeatureGroupSubGroup(parking_fg,name="Visitor Faculty Parking")),
     }
     #Applies to all lots A,B,C,D and visitor parking, can park in any of the mentioned lots
     freeParking = calcFreeParking()
@@ -232,6 +268,7 @@ def umbc_map():
     folium.CircleMarker([min_latitude, max_longitude], tooltip="Lower Right Corner").add_to(m)
     folium.CircleMarker([max_latitude, max_longitude], tooltip="Upper Right Corner").add_to(m)
     parse_street_parking_csv(m, permits, PARKING_COORDINATES_CSV)
+    parse_street_lot_csv(m, permits, LOT_COORDINATES_CSV)
     m.add_child(parking_fg)
     add_feature_groups(m, permits)
     m.add_child(folium.LayerControl(collapsed=False))
