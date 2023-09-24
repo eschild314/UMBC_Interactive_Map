@@ -12,9 +12,16 @@ for you on our website.
 
 ## Components
 
-The server run primarily on Python.  This project uses Flask and Folium.
+The website runs primarily on Python. 
+
+This project uses Flask and Folium.
+Folium is used for the map data, which it pulls from OpenStreetMaps.
+Flask interoperates with Folium and the rest of the website.
+
 It makes queries from DineOnCampus for the times and dates
 of restaurant closings.
+
+It's hosted using Azure.
 
 ## Challenges
 
