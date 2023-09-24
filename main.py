@@ -45,10 +45,8 @@ def foodTimes():
     for location in json.load(foodTimeJson)['locations']:
         if location['status']['message']=='Closed.':
             openFoodLocations[location['name']] = (location['open'],"00:00","none")
-        elif location['status']['message'][-8]==" ":
-            openFoodLocations[location['name']] = (location['open'],dt.strptime("0"+location['status']['message'][-7:-1],'%I:%M%p'),location['status']['message'])
         else:
-            openFoodLocations[location['name']] = (location['open'], dt.strptime(location['status']['message'][-8:-1], '%I:%M%p'), location['status']['message'])
+            openFoodLocations[location['name']] = (location['open'],"00:00", location['status']['message'])
     #print(openFoodLocations['Commons Retriever Market'][1].strftime('%H:%M'))
     return openFoodLocations
 
@@ -76,7 +74,7 @@ def umbc_map():
     if openFoodLocations["TRUE GRIT'S"][0]:
         dining_fg.add_child(folium.Marker(
             location=[39.25579239848943, -76.70774746301952],
-            popup="True Grit's Dining Hall"+" "+openFoodLocations["TRUE GRIT's"][2]))
+            popup=folium.Popup("True Grit's Dining Hall"+" "+openFoodLocations["TRUE GRIT'S"][2], max_width="100%")))
     if openFoodLocations["Wild Greens"][0]:
         dining_fg.add_child(folium.Marker(
             location=[39.25510631849656, -76.71111325383241],
@@ -179,7 +177,7 @@ if __name__ == '__main__':
     app.run()
     delete_databases()
     make_databases()
-    fillGenParking()
+    #fillGenParking()
     with app.app_context():
         print(genParking.query.all())
     print(str(dt.date.today()))
