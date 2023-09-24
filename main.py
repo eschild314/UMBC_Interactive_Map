@@ -134,13 +134,14 @@ def umbc_map():
     #Applies only to visitor parking, can park in visitor free parking
     visitorFreeParking = freeParking or checkHolidays()
     print(freeParking)
-    min_longitude, max_longitude = -76.716805, -76.705468
-    min_latitude, max_latitude = 39.251128, 39.260057
+    min_longitude, max_longitude = -76.72840172303653, -76.705468
+    min_latitude, max_latitude = 39.24946769219659, 39.26132540444559
     openFoodLocations = foodTimes()
     print(openFoodLocations)
     m = folium.Map(
         location=[39.2554, -76.7107],
         zoom_start=17,
+        min_zoom=17,
         zoom_control=False,
         control_scale=False,
         max_bounds=True,
