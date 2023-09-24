@@ -3,31 +3,16 @@ from datetime import date
 from datetime import datetime
 import json
 import urllib.request
-#import sqlalchemy as db
 import folium
 import folium.plugins.feature_group_sub_group as subGroup
-from folium import plugins
-import pandas
 from flask import Flask, render_template_string, render_template
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import Integer, String, Interval, Time
+from sqlalchemy import Integer, String, Time
 from sqlalchemy.orm import Mapped, mapped_column
-#from dateutil import rrule
-#from dateutil import relativedelta
 
-def delete_databases():
-    with app.app_context():
-        db.drop_all()
-def make_databases():
-    with app.app_context():
-        db.create_all()
 db = SQLAlchemy()
 # create the app
 app = Flask(__name__,static_folder="assets")
-# configure the SQLite database, relative to the app instance folder
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///main.db"
-# initialize the app with the extension
-db.init_app(app)
 class genParking(db.Model):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     day: Mapped[int] = mapped_column(String, nullable=False)
@@ -115,8 +100,6 @@ def parse_street_parking_csv(folium_map, permits, filename):
             previous_section = section_name
             previous_fg_permit = permit_type
 
-# Probably overcomplicated, and could be made into a single function
-# with the one above it.
 def parse_street_lot_csv(folium_map, permits, filename):
     with open(filename) as csv_file:
         line_count = 0
@@ -293,7 +276,7 @@ def umbc_map():
             location=[39.25568457647287, -76.70773784764805],
             popup="True Grit's Retriever Market"+" "+openFoodLocations["True Grit's Retriever Market"][2]))
         
-        m.add_child(dining_fg)
+    m.add_child(dining_fg)
 
     folium.CircleMarker([max_latitude, min_longitude], tooltip="Upper Left Corner").add_to(m)
     folium.CircleMarker([min_latitude, min_longitude], tooltip="Lower Left Corner").add_to(m)
