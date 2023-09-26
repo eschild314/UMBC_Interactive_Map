@@ -6,6 +6,16 @@
 -->
 <html>
 	<head>
+		<!-- Google tag (gtag.js) -->
+		<script async src="https://www.googletagmanager.com/gtag/js?id=G-H0BS7MQ0S3"></script>
+		<script>
+			window.dataLayer = window.dataLayer || [];
+			function gtag(){dataLayer.push(arguments);}
+			gtag('js', new Date());
+
+			gtag('config', 'G-H0BS7MQ0S3');
+		</script>
+
 		<title>UMBC Interactive Map</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
@@ -36,6 +46,13 @@
 							<li><a href="https://umbc-map.azurewebsites.net/map" class="button primary small">Fullscreen</a></li>
 						</ul>
 					</div>
+				</div>
+			</section>
+
+		<!-- Test print date/time -->
+			<section id="time" class=""main style1">
+				<div class="row aln-center">
+					<p>The current hour is {{dhour}}.</p>
 				</div>
 			</section>
 
