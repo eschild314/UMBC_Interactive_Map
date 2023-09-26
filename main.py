@@ -255,7 +255,7 @@ def umbc_map():
             popup=folium.Popup("rbc" + " " + openFoodLocations["rbc"][2],min_width=20, max_width=100)))
     if openFoodLocations["The Skylight Room"][0]:    
         dining_fg.add_child(folium.Marker(
-            location=[339.255008462116535, -76.71068141955072],
+            location=[39.255008462116535, -76.71068141955072],
             popup=folium.Popup("The Skylight Room" + " " + openFoodLocations["The Skylight Room"][2],min_width=20, max_width=100)))
     if openFoodLocations["Sorrentos"][0]:
         dining_fg.add_child(folium.Marker(
