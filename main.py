@@ -143,7 +143,7 @@ def generateAllSubGroups():
     return [subGroup.FeatureGroupSubGroup(visitor_fg,"t",control=False),subGroup.FeatureGroupSubGroup(commuter_fg,"t",control=False),subGroup.FeatureGroupSubGroup(residential_fg,"t",control=False),subGroup.FeatureGroupSubGroup(faculty_fg,"t",control=False),subGroup.FeatureGroupSubGroup(walker_fg,"t",control=False),subGroup.FeatureGroupSubGroup(parking_fg,"t",control=False)]
 @app.route("/")
 def display_index():
-    return render_template("index.html")
+    return render_template("index.html", dhour=datetime.now().hour)
 
 @app.route("/map")
 def umbc_map():
