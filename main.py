@@ -68,7 +68,8 @@ def add_feature_groups(folium_map, permits):
 # Returns a list of lists of tuples containing coordinates
 PARKING_COORDINATES_CSV = "coords.csv"
 LOT_COORDINATES_CSV = "lot_coords.csv"
-def parse_street_parking_csv(folium_map, permits, filename):
+DINING_COORDINATES_CSV = "dining_coords.csv"
+def parse_street_parking_csv(permits, filename):
     with open(filename) as csv_file:
         line_count = 0
         coordinates_list = []
@@ -101,7 +102,7 @@ def parse_street_parking_csv(folium_map, permits, filename):
             previous_section = section_name
             previous_fg_permit = permit_type
 
-def parse_street_lot_csv(folium_map, permits, filename):
+def parse_street_lot_csv(permits, filename):
     with open(filename) as csv_file:
         line_count = 0
         marker_list = []
@@ -133,17 +134,40 @@ def parse_street_lot_csv(folium_map, permits, filename):
             for fg in fgs:
                 fg.add_child(folium.Marker(location=marker, icon=folium.map.Icon(color=color,icon='')))
 
+def parse_dining_csv(openFoodLocations, filename):
+    with open(filename) as csv_file:
+        line_count = 0
+
+        for raw_line in csv_file:
+            # Skip the first line
+            if line_count == 0:
+                line_count += 1
+                continue
+            line = raw_line.strip()
+            fields = line.split(",")
+            api_name, loc_name = str(fields[0]), str(fields[1])
+            longitude, latitude = float(fields[2]), float(fields[3])
+
+            # Add the location to the dining feature group if it is currently open
+            if openFoodLocations[api_name][0]:
+                dining_fg.add_child(folium.Marker(
+                    location=[longitude, latitude],
+                    popup=folium.Popup(loc_name+" "+openFoodLocations[api_name][2],min_width=20, max_width=100)))
+
+# Create the feature groups
+dining_fg = folium.FeatureGroup(name='Dining Options')
 visitor_fg = folium.FeatureGroup(name="No Permit(Visitor)",show=False)
 commuter_fg = folium.FeatureGroup(name="Commuter Permit",show=False)
 residential_fg = folium.FeatureGroup(name="Residential Permit",show=False)
 faculty_fg = folium.FeatureGroup(name="Faculty Permit",show=False)
 walker_fg = folium.FeatureGroup(name="Walker Permit",show=False)
 parking_fg = folium.FeatureGroup(name="Display All Parking",show=False)
+
 def generateAllSubGroups():
     return [subGroup.FeatureGroupSubGroup(visitor_fg,"t",control=False),subGroup.FeatureGroupSubGroup(commuter_fg,"t",control=False),subGroup.FeatureGroupSubGroup(residential_fg,"t",control=False),subGroup.FeatureGroupSubGroup(faculty_fg,"t",control=False),subGroup.FeatureGroupSubGroup(walker_fg,"t",control=False),subGroup.FeatureGroupSubGroup(parking_fg,"t",control=False)]
 @app.route("/")
 def display_index():
-    return render_template("index.html", dhour=datetime.now().hour)
+    return render_template("index.html")
 
 @app.route("/map")
 def umbc_map():
@@ -209,93 +233,22 @@ def umbc_map():
         min_lon=min_longitude,
         max_lon=max_latitude,
     )
-
-    # Create the dining feature group
-    dining_fg = folium.FeatureGroup(name='Dining Options')
-
-    if openFoodLocations["TRUE GRIT'S"][0]:
-        dining_fg.add_child(folium.Marker(
-            location=[39.25579239848943, -76.70774746301952],
-            popup=folium.Popup("True Grit's Dining Hall"+" "+openFoodLocations["TRUE GRIT'S"][2],min_width=20, max_width=100)))
-    if openFoodLocations["Wild Greens"][0]:
-        dining_fg.add_child(folium.Marker(
-            location=[39.25510631849656, -76.71111325383241],
-            popup=folium.Popup("Wild Greens" + " " + openFoodLocations["Wild Greens"][2],min_width=20, max_width=100)))
-    if openFoodLocations["Halal Shack"][0]:
-        dining_fg.add_child(folium.Marker(
-            location=[39.25518885701059, -76.71137381365875],
-            popup=folium.Popup("Halal Shack" + " " + openFoodLocations["Halal Shack"][2],min_width=20, max_width=100)))
-    if openFoodLocations["Dunkin"][0]:
-        dining_fg.add_child(folium.Marker(
-            location=[39.25456046005272, -76.71106212699955],
-            popup=folium.Popup("Dunkin" + " " + openFoodLocations["Dunkin"][2],min_width=20, max_width=100)))
-    if openFoodLocations["Chick-fil-A"][0]:
-        dining_fg.add_child(folium.Marker(
-            location=[39.25414481349409, -76.71291550055203],
-            popup=folium.Popup("Chick-fil-A" + " " + openFoodLocations["Chick-fil-A"][2],min_width=20, max_width=100)))
-    if openFoodLocations["2.Mato"][0]:
-        dining_fg.add_child(folium.Marker(
-            location=[39.25512648103092, -76.71121394829719],
-            popup=folium.Popup("2.Mato" + " " + openFoodLocations["2.Mato"][2],min_width=20, max_width=100)))
-    if openFoodLocations["Commons Retriever Market"][0]:
-        dining_fg.add_child(folium.Marker(
-            location=[39.25512648103092, -76.71121394829719],
-            popup=folium.Popup("Commons Retriever Market" + " " + openFoodLocations["Commons Retriever Market"][2],min_width=20, max_width=100)))
-    if openFoodLocations["Copperhead Jacks"][0]:    
-        dining_fg.add_child(folium.Marker(
-            location=[39.255148288803476, -76.71127094523622],
-            popup=folium.Popup("Copperhead Jacks" + " " + openFoodLocations["Copperhead Jacks"][2],min_width=20, max_width=100)))
-    if openFoodLocations["Hissho"][0]:
-        dining_fg.add_child(folium.Marker(
-            location=[39.25519189438983, -76.71127028124181],
-            popup=folium.Popup("Hissho" + " " + openFoodLocations["Hissho"][2],min_width=20, max_width=100)))
-    if openFoodLocations["rbc"][0]:    
-        dining_fg.add_child(folium.Marker(
-            location=[39.25518930816724, -76.71124479370278],
-            popup=folium.Popup("rbc" + " " + openFoodLocations["rbc"][2],min_width=20, max_width=100)))
-    if openFoodLocations["The Skylight Room"][0]:    
-        dining_fg.add_child(folium.Marker(
-            location=[39.255008462116535, -76.71068141955072],
-            popup=folium.Popup("The Skylight Room" + " " + openFoodLocations["The Skylight Room"][2],min_width=20, max_width=100)))
-    if openFoodLocations["Sorrentos"][0]:
-        dining_fg.add_child(folium.Marker(
-            location=[39.25519657741852, -76.71135476426421],
-            popup=folium.Popup("Sorrentos" + " " + openFoodLocations["Sorrentos"][2],min_width=20, max_width=100)))
-    if openFoodLocations["Student Choice"][0]:
-        dining_fg.add_child(folium.Marker(
-            location=[39.25512232716872, -76.71133397714527],
-            popup=folium.Popup("Student Choice" + " " + openFoodLocations["Student Choice"][2],min_width=20, max_width=100)))
-    if openFoodLocations["Einstein Brother's Bagels"][0]:
-        dining_fg.add_child(folium.Marker(
-            location=[39.25640491623738, -76.71162495241681],
-            popup=folium.Popup("Einstein Brother's Bagels" + " " + openFoodLocations["Einstein Brother's Bagels"][2],min_width=20, max_width=100)))
-    if openFoodLocations["Starbucks"][0]:
-        dining_fg.add_child(folium.Marker(
-            location=[39.25427471682431, -76.71323086681052],
-            popup=folium.Popup("Starbucks" + " " + openFoodLocations["Starbucks"][2],min_width=20, max_width=100)))
-    if openFoodLocations["The Coffee Shop"][0]:    
-        dining_fg.add_child(folium.Marker(
-            location=[39.25294158464396, -76.71348604175182],
-            popup=folium.Popup("The Coffee Shop"+" "+openFoodLocations["The Coffee Shop"][2],min_width=20,max_width=100)))
-    if openFoodLocations["True Grit's Retriever Market"][0]:    
-        dining_fg.add_child(folium.Marker(min_width=500,max_width=500,
-            location=[39.25568457647287, -76.70773784764805],
-            popup=folium.Popup("True Grit's Retriever Market"+" "+openFoodLocations["True Grit's Retriever Market"][2],min_width=20,max_width=100)))
-        
-    m.add_child(dining_fg)
-
+ 
     folium.CircleMarker([max_latitude, min_longitude], tooltip="Upper Left Corner").add_to(m)
     folium.CircleMarker([min_latitude, min_longitude], tooltip="Lower Left Corner").add_to(m)
     folium.CircleMarker([min_latitude, max_longitude], tooltip="Lower Right Corner").add_to(m)
     folium.CircleMarker([max_latitude, max_longitude], tooltip="Upper Right Corner").add_to(m)
+    
+    m.add_child(dining_fg)
     m.add_child(visitor_fg)
     m.add_child(residential_fg)
     m.add_child(commuter_fg)
     m.add_child(faculty_fg)
     m.add_child(walker_fg)
     m.add_child(parking_fg)
-    parse_street_parking_csv(m, permits, PARKING_COORDINATES_CSV)
-    parse_street_lot_csv(m, permits, LOT_COORDINATES_CSV)
+    parse_street_parking_csv(permits, PARKING_COORDINATES_CSV)
+    parse_street_lot_csv(permits, LOT_COORDINATES_CSV)
+    parse_dining_csv(openFoodLocations, DINING_COORDINATES_CSV)
     add_feature_groups(m, permits)
     m.add_child(folium.LayerControl(collapsed=False))
     return m.get_root().render()
