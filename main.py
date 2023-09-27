@@ -151,7 +151,7 @@ def parse_dining_csv(openFoodLocations, filename):
             # Add the location to the dining feature group if it is currently open
             if openFoodLocations[api_name][0]:
                 dining_fg.add_child(folium.Marker(
-                    location=[latitude, longitude],
+                    location=[longitude, latitude],
                     popup=folium.Popup(loc_name+" "+openFoodLocations[api_name][2],min_width=20, max_width=100)))
 
 # Create the feature groups
