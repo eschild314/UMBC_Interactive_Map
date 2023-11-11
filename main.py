@@ -26,11 +26,13 @@ def fillGenParking():
     genParking[5] = (0,0)
     genParking[6] = (0,0)
     return genParking
+
 #Returns true if it's a visitor exception holiday
 def calcFreeParking(day,time):
     genParking = fillGenParking()
     weekDay = day.weekday()
     return not genParking[weekDay][0]<=time.hour<=genParking[weekDay][1]
+
 def checkHolidays(today):
     if(today==date(today.year, 1, 1)):
         return True
@@ -50,6 +52,7 @@ def checkHolidays(today):
         return True
     else:
         return False
+    
 def foodTimes():
     foodTimeJson = urllib.request.urlopen("https://api.dineoncampus.com/v1/locations/status?site_id=5751fd3690975b60e04893e2&platform=0")
     openFoodLocations = {}
@@ -156,15 +159,21 @@ def parse_dining_csv(openFoodLocations, filename):
 
 # Create the feature groups
 dining_fg = folium.FeatureGroup(name='Dining Options')
-visitor_fg = folium.FeatureGroup(name="No Permit(Visitor)",show=False)
-commuter_fg = folium.FeatureGroup(name="Commuter Permit",show=False)
-residential_fg = folium.FeatureGroup(name="Residential Permit",show=False)
-faculty_fg = folium.FeatureGroup(name="Faculty Permit",show=False)
-walker_fg = folium.FeatureGroup(name="Walker Permit",show=False)
-parking_fg = folium.FeatureGroup(name="Display All Parking",show=False)
+visitor_fg = folium.FeatureGroup(name="No Permit(Visitor)", show=False)
+commuter_fg = folium.FeatureGroup(name="Commuter Permit", show=False)
+residential_fg = folium.FeatureGroup(name="Residential Permit", show=False)
+faculty_fg = folium.FeatureGroup(name="Faculty Permit", show=False)
+walker_fg = folium.FeatureGroup(name="Walker Permit", show=False)
+parking_fg = folium.FeatureGroup(name="Display All Parking", show=False)
 
 def generateAllSubGroups():
-    return [subGroup.FeatureGroupSubGroup(visitor_fg,"t",control=False),subGroup.FeatureGroupSubGroup(commuter_fg,"t",control=False),subGroup.FeatureGroupSubGroup(residential_fg,"t",control=False),subGroup.FeatureGroupSubGroup(faculty_fg,"t",control=False),subGroup.FeatureGroupSubGroup(walker_fg,"t",control=False),subGroup.FeatureGroupSubGroup(parking_fg,"t",control=False)]
+    return [subGroup.FeatureGroupSubGroup(visitor_fg, control=False), 
+            subGroup.FeatureGroupSubGroup(commuter_fg, control=False),
+            subGroup.FeatureGroupSubGroup(residential_fg, control=False),
+            subGroup.FeatureGroupSubGroup(faculty_fg, control=False),
+            subGroup.FeatureGroupSubGroup(walker_fg, control=False),
+            subGroup.FeatureGroupSubGroup(parking_fg, control=False)]
+
 @app.route("/")
 def display_index():
     return render_template("index.html")
@@ -188,35 +197,38 @@ def umbc_map():
             "residential": ("lightgreen",generateAllSubGroups()),
             "faculty": ("purple", generateAllSubGroups()),
             "walker": ("green", generateAllSubGroups()),
-            "gated": ("darkpurple", [subGroup.FeatureGroupSubGroup(faculty_fg, "t", control=False),
-                                   subGroup.FeatureGroupSubGroup(parking_fg, "t", control=False)]),
+            "gated": ("darkpurple", [subGroup.FeatureGroupSubGroup(faculty_fg, control=False),
+                                   subGroup.FeatureGroupSubGroup(parking_fg, control=False)]),
             "visitor": ("blue", generateAllSubGroups()),
         }
     elif(visitorFreeParking):
         permits = {
-            "commuter": ("red", [subGroup.FeatureGroupSubGroup(commuter_fg, "t", control=False),
-                                 subGroup.FeatureGroupSubGroup(parking_fg, "t", control=False)]),
-            "residential": ("lightgreen", [subGroup.FeatureGroupSubGroup(residential_fg, "t", control=False),
-                                       subGroup.FeatureGroupSubGroup(parking_fg, "t", control=False)]),
-            "faculty": ("purple", [subGroup.FeatureGroupSubGroup(faculty_fg, "t", control=False),
-                                   subGroup.FeatureGroupSubGroup(parking_fg, "t", control=False)]),
-            "walker": ("green", [subGroup.FeatureGroupSubGroup(walker_fg, "t", control=False),
-                                   subGroup.FeatureGroupSubGroup(parking_fg, "t", control=False)]),
-            "gated": ("darkpurple", [subGroup.FeatureGroupSubGroup(faculty_fg, "t", control=False),
-                                   subGroup.FeatureGroupSubGroup(parking_fg, "t", control=False)]),
+            "commuter": ("red", [subGroup.FeatureGroupSubGroup(commuter_fg, control=False),
+                                 subGroup.FeatureGroupSubGroup(parking_fg, control=False)]),
+            "residential": ("lightgreen", [subGroup.FeatureGroupSubGroup(residential_fg, control=False),
+                                       subGroup.FeatureGroupSubGroup(parking_fg, control=False)]),
+            "faculty": ("purple", [subGroup.FeatureGroupSubGroup(faculty_fg, control=False),
+                                   subGroup.FeatureGroupSubGroup(parking_fg, control=False)]),
+            "walker": ("green", [subGroup.FeatureGroupSubGroup(walker_fg, control=False),
+                                   subGroup.FeatureGroupSubGroup(parking_fg, control=False)]),
+            "gated": ("darkpurple", [subGroup.FeatureGroupSubGroup(faculty_fg, control=False),
+                                   subGroup.FeatureGroupSubGroup(parking_fg, control=False)]),
             "visitor": ("blue", generateAllSubGroups()),
         }
     else:
         permits = {
-            "commuter": ("red", [subGroup.FeatureGroupSubGroup(commuter_fg,"t",control=False),subGroup.FeatureGroupSubGroup(parking_fg,"t",control=False)]),
-            "residential": ("lightgreen", [subGroup.FeatureGroupSubGroup(residential_fg,"t",control=False),subGroup.FeatureGroupSubGroup(parking_fg,"t",control=False)]),
-            "faculty": ("purple", [subGroup.FeatureGroupSubGroup(faculty_fg,"t",control=False),subGroup.FeatureGroupSubGroup(parking_fg,"t",control=False)]),
-            "walker": ("green", [subGroup.FeatureGroupSubGroup(walker_fg, "t", control=False),
-                                 subGroup.FeatureGroupSubGroup(parking_fg, "t", control=False)]),
-            "gated": ("darkpurple", [subGroup.FeatureGroupSubGroup(faculty_fg, "t", control=False),
-                                   subGroup.FeatureGroupSubGroup(parking_fg, "t", control=False)]),
-            "visitor": ("blue", [subGroup.FeatureGroupSubGroup(visitor_fg, "t", control=False),
-                                 subGroup.FeatureGroupSubGroup(parking_fg, "t", control=False)])
+            "commuter": ("red", [subGroup.FeatureGroupSubGroup(commuter_fg, control=False),
+                                 subGroup.FeatureGroupSubGroup(parking_fg, control=False)]),
+            "residential": ("lightgreen", [subGroup.FeatureGroupSubGroup(residential_fg, control=False),
+                                           subGroup.FeatureGroupSubGroup(parking_fg, control=False)]),
+            "faculty": ("purple", [subGroup.FeatureGroupSubGroup(faculty_fg, control=False),
+                                   subGroup.FeatureGroupSubGroup(parking_fg, control=False)]),
+            "walker": ("green", [subGroup.FeatureGroupSubGroup(walker_fg, control=False),
+                                 subGroup.FeatureGroupSubGroup(parking_fg, control=False)]),
+            "gated": ("darkpurple", [subGroup.FeatureGroupSubGroup(faculty_fg, control=False),
+                                   subGroup.FeatureGroupSubGroup(parking_fg, control=False)]),
+            "visitor": ("blue", [subGroup.FeatureGroupSubGroup(visitor_fg, control=False),
+                                 subGroup.FeatureGroupSubGroup(parking_fg, control=False)])
         }
     min_longitude, max_longitude = -76.72840172303653, -76.705468
     min_latitude, max_latitude = 39.24946769219659, 39.26132540444559
