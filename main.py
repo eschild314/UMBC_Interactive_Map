@@ -33,22 +33,24 @@ def calcFreeParking(day,time):
     weekDay = day.weekday()
     return not genParking[weekDay][0]<=time.hour<=genParking[weekDay][1]
 
+JAN, FEB, MAR, APR, MAY, JUN = 1, 2, 3, 4, 5, 6
+JUL, AUG, SEP, OCT, NOV, DEC = 7, 8, 9, 10, 11, 12
 def checkHolidays(today):
-    if(today==date(today.year, 1, 1)):
+    if(today==date(today.year, JAN, 1)):
         return True
-    elif(today==date(today.year,1,today.day) and today.weekday()==0 and 15<=today.day<=21):
+    elif(today==date(today.year, JAN,today.day) and today.weekday()==0 and 15<=today.day<=21):
         return True
-    elif(today==date(today.year,5,today.day) and today.weekday()==0 and 25<=today.day<=31):
+    elif(today==date(today.year, MAY,today.day) and today.weekday()==0 and 25<=today.day<=31):
         return True
-    elif(today==date(today.year, 6, 19)):
+    elif(today==date(today.year, JUN, 19)):
         return True
-    elif(today==date(today.year, 7, 4)):
+    elif(today==date(today.year, JUL, 4)):
         return True
-    elif(today==date(today.year,11,today.day) and today.weekday()==3 and 22<=today.day<=28):
+    elif(today==date(today.year, NOV,today.day) and today.weekday()==3 and 22<=today.day<=28):
         return True
-    elif(today==date(today.year,11,today.day) and today.weekday()==4 and 23<=today.day<=29):
+    elif(today==date(today.year, NOV,today.day) and today.weekday()==4 and 23<=today.day<=29):
         return True
-    elif(today==date(today.year,12,today.day) and today.day>=25):
+    elif(today==date(today.year, DEC,today.day) and today.day>=25):
         return True
     else:
         return False
